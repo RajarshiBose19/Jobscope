@@ -1,0 +1,38 @@
+[project]
+name = "jobscope"
+version = "0.1.0"
+description = "Personal LinkedIn job market intelligence tool, built on Jetro"
+requires-python = ">=3.11"
+dependencies = [
+  "duckdb>=1.0",
+  "selenium>=4.20",
+  "undetected-chromedriver>=3.5",
+  "google-genai>=0.3",
+  "pydantic>=2.7",
+  "python-dotenv>=1.0",
+  "click>=8.1",
+  "beautifulsoup4>=4.12",
+  "certifi>=2024.2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "pytest-mock>=3.12",
+]
+
+[project.scripts]
+jobscope = "jobscope.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["jobscope*"]
+
+[tool.setuptools.package-data]
+jobscope = ["db/*.sql", "db/*.csv"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
