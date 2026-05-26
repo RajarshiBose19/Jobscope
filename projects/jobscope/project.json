@@ -1,0 +1,9 @@
+{
+  "name": "JobScope",
+  "slug": "jobscope",
+  "description": "Personal LinkedIn job-market intelligence",
+  "mode": "research",
+  "linkedConnectors": [],
+  "linkedTemplates": [],
+  "linkedRecipes": []
+}
