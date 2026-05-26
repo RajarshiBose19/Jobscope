@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Env / secrets
+.env
+
+# JobScope runtime
+projects/jobscope/jobscope.duckdb
+projects/jobscope/jobscope.duckdb.bak-*
+projects/jobscope/state/current_job.json
+projects/jobscope/state/crashed/
+logs/
+
+# IDE
+.vscode/
+.idea/
+
+# Jetro
+.jetro/cache/
+.jetro/output/
+
+# Reference donor repo (do not commit)
+auto_job_applier_linkedIn/
+
+# Jetro auto-generated platform files
+CLAUDE.md
+AGENT.md
+
+# Jetro cache
+data/
