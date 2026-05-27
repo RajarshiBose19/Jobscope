@@ -35,21 +35,23 @@ Layout: live frames in the top half (y=0 → y=860), historical charts in the bo
 ### Frame element IDs (for reference if you need to move/resize)
 
 Live cockpit:
-- `mcp-1779898840434-3` — Bot Status (binding: refresh_current_job.py @ 2s)
-- `mcp-1779898842456-4` — Current Job (binding: refresh_current_job.py @ 2s)
-- `mcp-1779898844455-5` — Fit Score (binding: refresh_current_job.py @ 2s)
-- `mcp-1779898846482-6` — Experience match (binding: refresh_current_job.py @ 2s)
-- `mcp-1779898848582-7` — Red flags (binding: refresh_current_job.py @ 2s)
-- `mcp-1779898850525-8` — Skills breakdown (binding: refresh_current_job.py @ 2s)
-- `mcp-1779898853003-9` — AI recommendation (binding: refresh_current_job.py @ 2s)
-- `mcp-1779898854719-10` — Resume tailoring (binding: refresh_current_job.py @ 2s)
-- `mcp-1779898856421-11` — Session KPIs (binding: refresh_session_kpis.py @ 5s)
+- `mcp-1779899206770-3` — Bot Status (binding: refresh_current_job.py @ 2s)
+- `mcp-1779899211588-4` — Current Job (binding: refresh_current_job.py @ 2s)
+- `mcp-1779899216448-5` — Fit Score (binding: refresh_current_job.py @ 2s)
+- `mcp-1779899221150-6` — Experience match (binding: refresh_current_job.py @ 2s)
+- `mcp-1779899226837-7` — Red flags (binding: refresh_current_job.py @ 2s)
+- `mcp-1779899231806-8` — Skills breakdown (binding: refresh_current_job.py @ 2s)
+- `mcp-1779899237050-9` — AI recommendation (binding: refresh_current_job.py @ 2s)
+- `mcp-1779899243375-10` — Resume tailoring (binding: refresh_current_job.py @ 2s)
+- `mcp-1779899248895-11` — Session KPIs (binding: refresh_session_kpis.py @ 5s)
 
 Historical:
-- `mcp-1779898862475-12` — Skill gaps (binding: refresh_skill_gaps.py @ 30s)
-- `mcp-1779898864543-13` — Fit distribution (binding: refresh_fit_distribution.py @ 30s)
-- `mcp-1779898866692-14` — Salary map (binding: refresh_salary_map.py @ 30s)
-- `mcp-1779898868674-15` — Search term report (binding: refresh_search_term_report.py @ 30s)
+- `mcp-1779899253649-12` — Skill gaps (binding: refresh_skill_gaps.py @ 30s)
+- `mcp-1779899258687-13` — Fit distribution (binding: refresh_fit_distribution.py @ 30s)
+- `mcp-1779899263602-14` — Salary map (binding: refresh_salary_map.py @ 30s)
+- `mcp-1779899268529-15` — Search term report (binding: refresh_search_term_report.py @ 30s)
+
+**Note 2026-05-27 (post-MVP fix):** Initial bulk render call had all 13 `jet_render` invocations in parallel, which triggered a race condition in Jetro's canvas-file persist layer — the calls returned success IDs but nothing actually landed on disk. Fixed by re-rendering each frame sequentially. Lesson: `jet_render` to the same canvas is not parallel-safe; serialize them.
 
 ## Architectural deviation from spec
 
