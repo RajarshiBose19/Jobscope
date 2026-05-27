@@ -1,0 +1,32 @@
+<!-- .jetro/frames/live_hub.html -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>JobScope Live Hub</title>
+<style>
+  body { margin:0; font-family: ui-sans-serif, system-ui; background:#0e1116; color:#e6edf3; padding:12px; }
+  .row { display:flex; justify-content:space-between; gap:12px; align-items:center; }
+  .pill { padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; }
+  .live{background:#1f6f3a;color:#d6ffd6}.slow{background:#7a6a1a;color:#fff3a8}
+  .stalled{background:#7a1a1a;color:#ffd6d6}.missing{background:#3a3f47;color:#aab2bb}
+  .small { font-size:12px; color:#9aa4ad; }
+</style></head>
+<body>
+  <div class="row">
+    <div>
+      <div id="state" class="pill missing">missing</div>
+      <span id="sess" class="small"></span>
+    </div>
+    <div class="small">updated <span id="upd">—</span></div>
+  </div>
+  <script>
+    __JET.declarePorts && __JET.declarePorts({ outputs: ["current_job"] });
+    function render(d){
+      const pill = document.getElementById('state');
+      pill.textContent = d.state || 'unknown';
+      pill.className = 'pill ' + ((d._meta && d._meta.staleness) || 'missing');
+      document.getElementById('sess').textContent = d.session_id || '';
+      document.getElementById('upd').textContent = (d._meta && d._meta.computed_at) || '';
+      __JET.send('current_job', d);
+    }
+    window.addEventListener('jet:refresh', e => render(e.detail || {}));
+  </script>
+</body></html>
