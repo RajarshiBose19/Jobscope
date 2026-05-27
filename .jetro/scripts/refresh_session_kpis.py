@@ -3,6 +3,7 @@ from __future__ import annotations
 import json, os, sys
 from datetime import datetime, timezone
 from pathlib import Path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".venv", "Lib", "site-packages"))
 import duckdb
 
 WS = Path(os.environ.get("JET_WORKSPACE", ".")).resolve()

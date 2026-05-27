@@ -1,5 +1,6 @@
 import json, os, sys
 from pathlib import Path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".venv", "Lib", "site-packages"))
 import duckdb
 DB = Path(os.environ.get("JET_WORKSPACE",".")).resolve() / "projects/jobscope/jobscope.duckdb"
 def main():
