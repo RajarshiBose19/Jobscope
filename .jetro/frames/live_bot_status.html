@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Bot status</title>
+<style>
+  body{margin:0;font-family:ui-sans-serif,system-ui;background:#0e1116;color:#e6edf3;padding:14px}
+  .row{display:flex;justify-content:space-between;align-items:center}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .live{background:#2ecc71}.slow{background:#f1c40f}.stalled{background:#e74c3c}.missing{background:#7f8a94}
+  .small{color:#9aa4ad;font-size:12px}
+</style></head>
+<body>
+<div class="row">
+  <div><span id="dot" class="dot missing"></span><span id="state">missing</span></div>
+  <div class="small"><span id="upd">—</span></div>
+</div>
+<div class="small" style="margin-top:6px">Session: <span id="sid">—</span></div>
+<script>
+  __JET.on('current_job', d => {
+    const s = (d._meta && d._meta.staleness) || 'missing';
+    const dot = document.getElementById('dot'); dot.className = 'dot ' + s;
+    document.getElementById('state').textContent = d.state || 'unknown';
+    document.getElementById('upd').textContent = (d._meta && d._meta.computed_at) || '—';
+    document.getElementById('sid').textContent = d.session_id || '—';
+  });
+</script></body></html>

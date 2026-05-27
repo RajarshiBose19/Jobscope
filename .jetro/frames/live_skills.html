@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Skills</title>
+<style>
+  body{margin:0;font-family:ui-sans-serif,system-ui;background:#0e1116;color:#e6edf3;padding:12px}
+  .cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .col h3{margin:0 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#9aa4ad}
+  .chip{display:inline-block;padding:4px 8px;margin:2px;border-radius:6px;font-size:12px}
+  .ok{background:#15321f;color:#9dffb0}.miss{background:#3a1418;color:#ffb0b6}.nice{background:#2a2a3a;color:#cad1ff}
+</style></head>
+<body>
+<div class="cols">
+  <div class="col"><h3>Matched</h3><div id="m">—</div></div>
+  <div class="col"><h3>Missing required</h3><div id="x">—</div></div>
+  <div class="col"><h3>Nice-to-have</h3><div id="n">—</div></div>
+</div>
+<script>
+  __JET.on('current_job', d => {
+    const skills = (d.analysis && d.analysis.skills) || [];
+    const m = document.getElementById('m'); m.innerHTML = '<span class="chip ok">—</span>';
+    const x = document.getElementById('x'); x.innerHTML = '';
+    const n = document.getElementById('n'); n.innerHTML = '';
+    for (const s of skills){
+      const txt = s.as_written || s.canonical;
+      if (s.kind === 'required')  x.insertAdjacentHTML('beforeend', '<span class="chip miss">'+txt+'</span>');
+      else                        n.insertAdjacentHTML('beforeend', '<span class="chip nice">'+txt+'</span>');
+    }
+  });
+</script></body></html>

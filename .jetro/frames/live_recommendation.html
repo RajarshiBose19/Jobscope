@@ -1,0 +1,11 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Recommendation</title>
+<style>
+  body{margin:0;font-family:ui-sans-serif,system-ui;background:#0e1116;color:#e6edf3;padding:14px;line-height:1.45}
+  h3{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#9aa4ad}
+</style></head>
+<body><h3>AI recommendation</h3><div id="r" style="font-size:14px">—</div>
+<script>
+  __JET.on('current_job', d => {
+    document.getElementById('r').textContent = (d.analysis && d.analysis.recommendation) || '—';
+  });
+</script></body></html>

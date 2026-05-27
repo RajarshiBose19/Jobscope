@@ -1,0 +1,19 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Fit</title>
+<style>
+  body{margin:0;font-family:ui-sans-serif,system-ui;background:#0e1116;color:#e6edf3;padding:14px;text-align:center}
+  .num{font-size:60px;font-weight:700;line-height:1}
+  .label{font-size:12px;color:#9aa4ad;margin-top:6px;letter-spacing:.1em;text-transform:uppercase}
+</style></head>
+<body>
+<div class="num" id="n">—</div>
+<div class="label">Fit score</div>
+<script>
+  function color(s){ if(s>=80)return'#2ecc71'; if(s>=60)return'#a5d610'; if(s>=40)return'#f1c40f'; if(s>=20)return'#e67e22'; return'#e74c3c'; }
+  __JET.on('current_job', d => {
+    const a = d.analysis || {};
+    const s = (typeof a.fit_score === 'number') ? a.fit_score : null;
+    const n = document.getElementById('n');
+    if (s == null) { n.textContent='—'; n.style.color='#9aa4ad'; }
+    else { n.textContent = s; n.style.color = color(s); }
+  });
+</script></body></html>
