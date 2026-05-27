@@ -1,11 +1,20 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><title>Skill gaps</title>
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
-<style>body{margin:0;background:#0e1116;color:#e6edf3;font-family:ui-sans-serif,system-ui}</style>
+<style>body{margin:0;background:#0e1116;color:#e6edf3;font-family:ui-sans-serif,system-ui}
+.empty{padding:40px;color:#9aa4ad;font-size:13px;text-align:center}</style>
 </head><body>
 <div id="c" style="width:100%;height:100%"></div>
+<div id="empty" class="empty">Waiting for data…</div>
 <script>
-  function plot(d){
-    const rows = (d && d.rows) || [];
+  let lastData = null;
+  function tryPlot(){
+    if (!lastData) return;
+    if (typeof Plotly === 'undefined') { setTimeout(tryPlot, 80); return; }
+    const rows = lastData.rows || [];
+    const empty = document.getElementById('empty');
+    const cdiv = document.getElementById('c');
+    if (!rows.length){ cdiv.style.display='none'; empty.style.display='block'; empty.textContent='No skill-gap data yet.'; return; }
+    cdiv.style.display='block'; empty.style.display='none';
     const skills = rows.map(r=>r.skill).reverse();
     const miss   = rows.map(r=>r.missing).reverse();
     Plotly.react('c', [{type:'bar',orientation:'h',x:miss,y:skills,
@@ -15,5 +24,6 @@
        xaxis:{title:'Jobs where missing'},yaxis:{automargin:true}},
       {displayModeBar:false,responsive:true});
   }
-  window.addEventListener('jet:refresh', e => plot(e.detail || {}));
+  window.addEventListener('jet:refresh', e => { lastData = e.detail || {}; tryPlot(); });
+  window.addEventListener('load', tryPlot);
 </script></body></html>

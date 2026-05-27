@@ -1,16 +1,20 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><title>Salary map</title>
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 <style>body{margin:0;background:#0e1116;color:#e6edf3;font-family:ui-sans-serif,system-ui;padding:8px}
-.empty{padding:20px;color:#9aa4ad;font-size:13px;text-align:center}</style>
+.empty{padding:40px;color:#9aa4ad;font-size:13px;text-align:center}</style>
 </head><body>
 <div id="c" style="width:100%;height:90%"></div>
-<div id="empty" class="empty" style="display:none">No salary data found in JDs yet.</div>
+<div id="empty" class="empty">Waiting for data…</div>
 <script>
-  function plot(d){
-    const rows = (d && d.rows) || [];
+  let lastData = null;
+  function tryPlot(){
+    if (!lastData) return;
+    if (typeof Plotly === 'undefined') { setTimeout(tryPlot, 80); return; }
+    const rows = lastData.rows || [];
     const empty = document.getElementById('empty');
-    if (!rows.length){ document.getElementById('c').style.display='none'; empty.style.display='block'; return; }
-    document.getElementById('c').style.display='block'; empty.style.display='none';
+    const cdiv = document.getElementById('c');
+    if (!rows.length){ cdiv.style.display='none'; empty.style.display='block'; empty.textContent='No salary data found in JDs yet.'; return; }
+    cdiv.style.display='block'; empty.style.display='none';
     const terms = [...new Set(rows.map(r=>r.term))];
     const traces = terms.map(t => ({
       type:'box', name:t, orientation:'h',
@@ -25,5 +29,6 @@
                     showarrow:false,font:{color:'#f1c40f',size:11}}]
     }, {displayModeBar:false,responsive:true});
   }
-  window.addEventListener('jet:refresh', e => plot(e.detail||{}));
+  window.addEventListener('jet:refresh', e => { lastData = e.detail || {}; tryPlot(); });
+  window.addEventListener('load', tryPlot);
 </script></body></html>
