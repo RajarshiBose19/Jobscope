@@ -1,4 +1,4 @@
-"""Emit Plotly traces for the fit-score distribution histogram (type='chart')."""
+"""Emit fit-score histogram buckets (0-9, 10-19, ..., 90-100) for HTML/CSS column chart."""
 import json, os, sys
 from pathlib import Path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".venv", "Lib", "site-packages"))
@@ -7,27 +7,18 @@ import duckdb
 DB = Path(os.environ.get("JET_WORKSPACE", ".")).resolve() / "projects/jobscope/jobscope.duckdb"
 
 def main():
-    scores = []
+    buckets = [0] * 10  # indices 0..9 = scores 0-9, 10-19, ..., 90-100
     if DB.exists():
         c = duckdb.connect(str(DB), read_only=True)
-        scores = [r[0] for r in c.execute(
+        for (s,) in c.execute(
             "SELECT fit_score FROM v_job_analysis WHERE fit_score IS NOT NULL"
-        ).fetchall()]
+        ).fetchall():
+            buckets[min(s // 10, 9)] += 1
         c.close()
+    labels = [f"{i*10}-{i*10+9 if i<9 else 100}" for i in range(10)]
     sys.stdout.write(json.dumps({
-        "traces": [{
-            "type": "histogram", "x": scores,
-            "xbins": {"start": 0, "end": 100, "size": 10},
-            "marker": {"color": "#5dade2"},
-        }],
-        "plotlyLayout": {
-            "paper_bgcolor": "#0e1116", "plot_bgcolor": "#0e1116",
-            "font": {"color": "#e6edf3"},
-            "margin": {"l": 40, "r": 20, "t": 20, "b": 40}, "bargap": 0.05,
-            "xaxis": {"title": "Fit score", "range": [0, 100]},
-            "yaxis": {"title": "Jobs"},
-            "showlegend": False,
-        },
+        "buckets": [{"label": l, "count": n} for l, n in zip(labels, buckets)],
+        "total": sum(buckets),
     }))
 
 if __name__ == "__main__":

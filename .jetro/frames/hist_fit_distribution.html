@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Fit distribution</title>
+<style>
+  body{margin:0;font-family:ui-sans-serif,system-ui;background:#0e1116;color:#e6edf3;padding:12px}
+  h3{margin:0 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#9aa4ad}
+  .sub{color:#9aa4ad;font-size:11px;margin-bottom:14px}
+  .chart{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;align-items:end;height:220px}
+  .col{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%}
+  .bar{width:100%;background:#5dade2;border-radius:4px 4px 0 0;min-height:2px;position:relative}
+  .bar .v{position:absolute;top:-18px;left:0;right:0;text-align:center;font-size:11px;font-weight:600;color:#cad1ff}
+  .bar.zero{background:#1a1f26}
+  .bar.green{background:#2ecc71}
+  .bar.yellow{background:#f1c40f}
+  .bar.red{background:#e74c3c}
+  .col .l{font-size:10px;color:#9aa4ad;letter-spacing:.04em}
+  .empty{padding:30px;color:#9aa4ad;font-size:13px;text-align:center}
+</style></head><body>
+<h3>Fit-score distribution</h3>
+<div class="sub" id="sub">Waiting for data…</div>
+<div id="root"></div>
+<script>
+  function colorFor(i){ return i>=8?'green': i>=6?'yellow': i>=4?'#e67e22':'red'; }
+  window.addEventListener('jet:refresh', e => {
+    const d = e.detail || {};
+    const buckets = d.buckets || [];
+    const total = d.total || 0;
+    if (!buckets.length || total === 0){
+      document.getElementById('sub').textContent = 'No fit scores yet.';
+      document.getElementById('root').innerHTML = '';
+      return;
+    }
+    document.getElementById('sub').textContent = total + ' jobs evaluated';
+    const maxN = Math.max.apply(null, buckets.map(b => b.count));
+    const html = '<div class="chart">' + buckets.map((b, i) => {
+      const pct = maxN ? Math.round(100 * b.count / maxN) : 0;
+      const cls = b.count === 0 ? 'zero' : colorFor(i);
+      return '<div class="col">'+
+        '<div class="bar '+cls+'" style="height:'+pct+'%"><span class="v">'+(b.count||'')+'</span></div>'+
+        '<div class="l">'+b.label+'</div></div>';
+    }).join('') + '</div>';
+    document.getElementById('root').innerHTML = html;
+  });
+</script></body></html>

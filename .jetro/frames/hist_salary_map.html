@@ -1,0 +1,45 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Salary map</title>
+<style>
+  body{margin:0;font-family:ui-sans-serif,system-ui;background:#0e1116;color:#e6edf3;padding:12px}
+  h3{margin:0 0 4px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#9aa4ad}
+  .sub{color:#9aa4ad;font-size:11px;margin-bottom:12px}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{padding:8px 10px;text-align:right;border-bottom:1px solid #21262d}
+  th{font-weight:600;color:#9aa4ad;letter-spacing:.05em;text-transform:uppercase;font-size:11px}
+  th:first-child,td:first-child{text-align:left}
+  .range{position:relative;background:#161b22;height:16px;border-radius:8px;width:100%}
+  .range .bar{position:absolute;top:0;bottom:0;background:#5dade2;border-radius:8px;opacity:.8}
+  .range .exp{position:absolute;top:-2px;bottom:-2px;width:2px;background:#f1c40f}
+  .empty{padding:30px;color:#9aa4ad;font-size:13px;text-align:center}
+</style></head><body>
+<h3>Salary by search term (LPA)</h3>
+<div class="sub">Yellow line = your expected 12 LPA</div>
+<table>
+  <thead><tr><th>Search term</th><th>Jobs w/ salary</th><th>Min</th><th>Mid</th><th>Max</th><th style="width:35%">Range</th></tr></thead>
+  <tbody id="t"><tr><td colspan="6" class="empty">Waiting for data…</td></tr></tbody>
+</table>
+<script>
+  window.addEventListener('jet:refresh', e => {
+    const d = e.detail || {};
+    const rows = d.rows || [];
+    const expected = d.expected || 12;
+    const tb = document.getElementById('t');
+    if (!rows.length){ tb.innerHTML = '<tr><td colspan="6" class="empty">No salary data yet.</td></tr>'; return; }
+    const globalMax = Math.max.apply(null, rows.map(r => r.max || 0).concat([expected, 1]));
+    const expPct = 100 * expected / globalMax;
+    tb.innerHTML = rows.map(r => {
+      const mn = r.min || 0, mx = r.max || mn;
+      const leftPct = 100 * mn / globalMax;
+      const widthPct = Math.max(2, 100 * (mx - mn) / globalMax);
+      return '<tr>'+
+        '<td>'+r.term+'</td>'+
+        '<td>'+(r.n ?? 0)+'</td>'+
+        '<td>'+(r.min ?? '—')+'</td>'+
+        '<td>'+(r.mid ?? '—')+'</td>'+
+        '<td>'+(r.max ?? '—')+'</td>'+
+        '<td><div class="range"><div class="bar" style="left:'+leftPct+'%;width:'+widthPct+'%"></div>'+
+        '<div class="exp" style="left:'+expPct+'%"></div></div></td>'+
+        '</tr>';
+    }).join('');
+  });
+</script></body></html>
