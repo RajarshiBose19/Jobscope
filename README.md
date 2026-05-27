@@ -60,5 +60,5 @@ See `PROJECT.md` for the full repo index. Key entry points:
 - `jobscope/ai/prompts.py` — Gemini prompt
 - `.jetro/frames/` — canvas HTML
 - `.jetro/scripts/` — canvas refresh scripts
-- `docs/superpowers/skills/jobscope_dashboard.md` — Jetro skill for building more dashboards
+- `.jetro/skills/jobscope_dashboard.md` — Jetro skill for building more dashboards
 - `docs/superpowers/specs/2026-05-25-jobscope-design.md` — full design spec
