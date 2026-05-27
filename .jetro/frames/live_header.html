@@ -14,5 +14,5 @@
     document.getElementById('l').textContent = d.location || (d.search_term ? 'searching '+d.search_term : '—');
     document.getElementById('w').textContent = d.work_style || '';
   }
-  __JET.on('current_job', show);
+  window.addEventListener('jet:refresh', e => show(e.detail || {}));
 </script></body></html>

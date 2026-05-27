@@ -13,7 +13,8 @@
 </div>
 <div class="small" style="margin-top:6px">Session: <span id="sid">—</span></div>
 <script>
-  __JET.on('current_job', d => {
+  window.addEventListener('jet:refresh', e => {
+    const d = e.detail || {};
     const s = (d._meta && d._meta.staleness) || 'missing';
     const dot = document.getElementById('dot'); dot.className = 'dot ' + s;
     document.getElementById('state').textContent = d.state || 'unknown';

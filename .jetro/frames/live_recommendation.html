@@ -5,7 +5,8 @@
 </style></head>
 <body><h3>AI recommendation</h3><div id="r" style="font-size:14px">—</div>
 <script>
-  __JET.on('current_job', d => {
+  window.addEventListener('jet:refresh', e => {
+    const d = e.detail || {};
     document.getElementById('r').textContent = (d.analysis && d.analysis.recommendation) || '—';
   });
 </script></body></html>

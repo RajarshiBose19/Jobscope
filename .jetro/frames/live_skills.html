@@ -13,7 +13,8 @@
   <div class="col"><h3>Nice-to-have</h3><div id="n">—</div></div>
 </div>
 <script>
-  __JET.on('current_job', d => {
+  window.addEventListener('jet:refresh', e => {
+    const d = e.detail || {};
     const skills = (d.analysis && d.analysis.skills) || [];
     const m = document.getElementById('m'); m.innerHTML = '<span class="chip ok">—</span>';
     const x = document.getElementById('x'); x.innerHTML = '';

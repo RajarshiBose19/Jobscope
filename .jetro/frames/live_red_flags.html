@@ -7,7 +7,8 @@
 <body>
 <div id="f"><span class="none">—</span></div>
 <script>
-  __JET.on('current_job', d => {
+  window.addEventListener('jet:refresh', e => {
+    const d = e.detail || {};
     const f = (d.analysis && d.analysis.red_flags) || [];
     const out = document.getElementById('f');
     if (!f.length){ out.innerHTML = '<span class="none">No red flags</span>'; return; }

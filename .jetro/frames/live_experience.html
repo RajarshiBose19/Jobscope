@@ -13,7 +13,8 @@
 <div class="row"><div class="num" id="r">—</div><div class="v" id="v">—</div></div>
 <div style="color:#9aa4ad;font-size:12px;margin-top:6px">You: <span id="me">—</span> yrs</div>
 <script>
-  __JET.on('current_job', d => {
+  window.addEventListener('jet:refresh', e => {
+    const d = e.detail || {};
     const a = d.analysis || {};
     const lo = a.experience_min_years, hi = a.experience_max_years;
     document.getElementById('r').textContent =

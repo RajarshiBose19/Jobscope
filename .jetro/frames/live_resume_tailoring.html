@@ -5,7 +5,8 @@
 </style></head>
 <body><h3>Resume tailoring</h3><div id="t" style="font-size:14px">—</div>
 <script>
-  __JET.on('current_job', d => {
+  window.addEventListener('jet:refresh', e => {
+    const d = e.detail || {};
     document.getElementById('t').textContent = (d.analysis && d.analysis.resume_tailoring) || '—';
   });
 </script></body></html>
