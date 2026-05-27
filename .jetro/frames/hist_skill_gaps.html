@@ -1,0 +1,19 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Skill gaps</title>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<style>body{margin:0;background:#0e1116;color:#e6edf3;font-family:ui-sans-serif,system-ui}</style>
+</head><body>
+<div id="c" style="width:100%;height:100%"></div>
+<script>
+  function plot(d){
+    const rows = (d && d.rows) || [];
+    const skills = rows.map(r=>r.skill).reverse();
+    const miss   = rows.map(r=>r.missing).reverse();
+    Plotly.react('c', [{type:'bar',orientation:'h',x:miss,y:skills,
+      marker:{color:'#e74c3c'},hovertemplate:'%{y}: missing in %{x} jobs<extra></extra>'}],
+      {paper_bgcolor:'#0e1116',plot_bgcolor:'#0e1116',
+       font:{color:'#e6edf3'},margin:{l:140,r:20,t:20,b:30},
+       xaxis:{title:'Jobs where missing'},yaxis:{automargin:true}},
+      {displayModeBar:false,responsive:true});
+  }
+  window.addEventListener('jet:refresh', e => plot(e.detail || {}));
+</script></body></html>

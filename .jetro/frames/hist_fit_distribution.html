@@ -1,0 +1,17 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Fit distribution</title>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<style>body{margin:0;background:#0e1116;color:#e6edf3;font-family:ui-sans-serif,system-ui}</style>
+</head><body>
+<div id="c" style="width:100%;height:100%"></div>
+<script>
+  function plot(d){
+    const xs = (d && d.scores) || [];
+    Plotly.react('c', [{type:'histogram',x:xs,xbins:{start:0,end:100,size:10},
+      marker:{color:'#5dade2'}}],
+      {paper_bgcolor:'#0e1116',plot_bgcolor:'#0e1116',font:{color:'#e6edf3'},
+       margin:{l:40,r:20,t:20,b:40},bargap:0.05,
+       xaxis:{title:'Fit score',range:[0,100]},yaxis:{title:'Jobs'}},
+      {displayModeBar:false,responsive:true});
+  }
+  window.addEventListener('jet:refresh', e => plot(e.detail||{}));
+</script></body></html>
