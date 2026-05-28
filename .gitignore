@@ -10,6 +10,9 @@ venv/
 .env
 
 # JobScope runtime
+projects/jobscope/profile.json
+projects/jobscope/project.json
+projects/jobscope/resume.pdf
 projects/jobscope/jobscope.duckdb
 projects/jobscope/jobscope.duckdb.bak-*
 projects/jobscope/state/current_job.json
