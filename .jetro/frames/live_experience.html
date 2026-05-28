@@ -11,7 +11,6 @@
 </style></head>
 <body>
 <div class="row"><div class="num" id="r">—</div><div class="v" id="v">—</div></div>
-<div style="color:#9aa4ad;font-size:12px;margin-top:6px">You: <span id="me">—</span> yrs</div>
 <script>
   window.addEventListener('jet:refresh', e => {
     const d = e.detail || {};
@@ -25,6 +24,5 @@
     const v = document.getElementById('v');
     v.textContent = a.experience_verdict || '—';
     v.className = 'v ' + (a.experience_verdict || '');
-    document.getElementById('me').textContent = '2';
   });
 </script></body></html>

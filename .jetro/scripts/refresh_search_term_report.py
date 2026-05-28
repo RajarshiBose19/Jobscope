@@ -1,18 +1,18 @@
+from __future__ import annotations
 import json, os, sys
 from pathlib import Path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".venv", "Lib", "site-packages"))
-import duckdb
-DB = Path(os.environ.get("JET_WORKSPACE",".")).resolve() / "projects/jobscope/jobscope.duckdb"
+
+WS = Path(os.environ.get("JET_WORKSPACE", ".")).resolve()
+SNAP = WS / "projects" / "jobscope" / "state" / "search_term_report.json"
+
 def main():
-    if not DB.exists(): sys.stdout.write(json.dumps({"rows":[]})); return
-    c = duckdb.connect(str(DB), read_only=True)
-    rows = c.execute("""
-      SELECT search_term, jobs_seen, avg_fit, applied, skipped, apply_rate_pct
-      FROM v_search_term_report
-    """).fetchall()
-    c.close()
-    sys.stdout.write(json.dumps({"rows":[{
-        "term":r[0],"seen":r[1],"avg_fit":r[2],"applied":r[3],
-        "skipped":r[4],"apply_rate":r[5]
-    } for r in rows]}))
-if __name__ == "__main__": main()
+    out = {"rows": []}
+    if SNAP.exists():
+        try:
+            out = json.loads(SNAP.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    sys.stdout.write(json.dumps(out))
+
+if __name__ == "__main__":
+    main()

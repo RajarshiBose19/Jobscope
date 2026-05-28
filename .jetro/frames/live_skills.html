@@ -4,25 +4,54 @@
   .cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
   .col h3{margin:0 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#9aa4ad}
   .chip{display:inline-block;padding:4px 8px;margin:2px;border-radius:6px;font-size:12px}
-  .ok{background:#15321f;color:#9dffb0}.miss{background:#3a1418;color:#ffb0b6}.nice{background:#2a2a3a;color:#cad1ff}
+  .ok{background:#15321f;color:#9dffb0}
+  .partial{background:#3a2d08;color:#ffd47a;border:1px dashed #f1c40f}
+  .miss{background:#3a1418;color:#ffb0b6}
+  .nice-ok{background:#15321f;color:#9dffb0;border:1px dashed #2ecc71}
+  .nice-partial{background:#3a2d08;color:#ffd47a;border:1px dashed #f1c40f}
+  .nice{background:#2a2a3a;color:#cad1ff}
+  .empty{color:#5a6572;font-size:12px;font-style:italic}
 </style></head>
 <body>
 <div class="cols">
-  <div class="col"><h3>Matched</h3><div id="m">—</div></div>
-  <div class="col"><h3>Missing required</h3><div id="x">—</div></div>
-  <div class="col"><h3>Nice-to-have</h3><div id="n">—</div></div>
+  <div class="col"><h3>Matched (required)</h3><div id="m"><span class="empty">—</span></div></div>
+  <div class="col"><h3>Missing (required)</h3><div id="x"><span class="empty">—</span></div></div>
+  <div class="col"><h3>Nice-to-have</h3><div id="n"><span class="empty">—</span></div></div>
 </div>
 <script>
   window.addEventListener('jet:refresh', e => {
     const d = e.detail || {};
     const skills = (d.analysis && d.analysis.skills) || [];
-    const m = document.getElementById('m'); m.innerHTML = '<span class="chip ok">—</span>';
-    const x = document.getElementById('x'); x.innerHTML = '';
-    const n = document.getElementById('n'); n.innerHTML = '';
+    const m = document.getElementById('m');
+    const x = document.getElementById('x');
+    const n = document.getElementById('n');
+    m.innerHTML = ''; x.innerHTML = ''; n.innerHTML = '';
+    let matched = 0, missing = 0, nice = 0;
     for (const s of skills){
       const txt = s.as_written || s.canonical;
-      if (s.kind === 'required')  x.insertAdjacentHTML('beforeend', '<span class="chip miss">'+txt+'</span>');
-      else                        n.insertAdjacentHTML('beforeend', '<span class="chip nice">'+txt+'</span>');
+      const match = s.match || 'missing';
+      if (s.kind === 'required'){
+        if (match === 'matched'){
+          m.insertAdjacentHTML('beforeend', '<span class="chip ok">'+txt+'</span>');
+          matched++;
+        } else if (match === 'partial'){
+          // Treat partial as "matched" column with a yellow tint — still a strength
+          m.insertAdjacentHTML('beforeend', '<span class="chip partial" title="partial match">'+txt+'</span>');
+          matched++;
+        } else {
+          x.insertAdjacentHTML('beforeend', '<span class="chip miss">'+txt+'</span>');
+          missing++;
+        }
+      } else {
+        const cls = match === 'matched' ? 'nice-ok'
+                  : match === 'partial' ? 'nice-partial'
+                  : 'nice';
+        n.insertAdjacentHTML('beforeend', '<span class="chip '+cls+'">'+txt+'</span>');
+        nice++;
+      }
     }
+    if (!matched) m.innerHTML = '<span class="empty">none</span>';
+    if (!missing) x.innerHTML = '<span class="empty">none</span>';
+    if (!nice)    n.innerHTML = '<span class="empty">none</span>';
   });
 </script></body></html>

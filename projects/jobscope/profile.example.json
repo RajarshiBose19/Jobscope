@@ -1,0 +1,26 @@
+{
+  "full_name": "Your Name",
+  "current_role": "Software Engineer",
+  "current_company": "Your Company",
+  "experience_years": 2.0,
+  "current_ctc_lpa": 8.0,
+  "expected_ctc_lpa": 14.0,
+  "current_location": "Bengaluru",
+  "willing_locations": ["Bengaluru", "Remote"],
+  "certifications": [
+    "AWS Solutions Architect Associate"
+  ],
+  "skills": [
+    {"skill_canonical": "python",     "proficiency": "expert",     "years": 3.0},
+    {"skill_canonical": "react",      "proficiency": "proficient", "years": 2.0},
+    {"skill_canonical": "sql",        "proficiency": "proficient", "years": 2.0},
+    {"skill_canonical": "aws",        "proficiency": "familiar",   "years": 1.0}
+  ],
+  "projects": [
+    {
+      "name": "Example Project",
+      "stack": ["python", "react", "aws"],
+      "summary": "Brief description of what the project does"
+    }
+  ]
+}

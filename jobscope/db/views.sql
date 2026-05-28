@@ -31,9 +31,9 @@ CREATE OR REPLACE VIEW v_search_term_report AS
 SELECT j.search_term,
        COUNT(*) AS jobs_seen,
        ROUND(AVG(a.fit_score), 1) AS avg_fit,
-       COUNT(*) FILTER (WHERE d.decision = 'apply')  AS applied,
+       COUNT(*) FILTER (WHERE d.decision IN ('apply', 'apply_external_submitted')) AS applied,
        COUNT(*) FILTER (WHERE d.decision = 'skip')   AS skipped,
-       ROUND(100.0 * COUNT(*) FILTER (WHERE d.decision = 'apply')
+       ROUND(100.0 * COUNT(*) FILTER (WHERE d.decision IN ('apply', 'apply_external_submitted'))
              / NULLIF(COUNT(*), 0), 1) AS apply_rate_pct
 FROM jobs j
 LEFT JOIN v_job_analysis a USING (job_id)
@@ -47,7 +47,9 @@ ORDER BY avg_fit DESC NULLS LAST;
 CREATE OR REPLACE VIEW v_current_session_stats AS
 SELECT s.session_id, s.started_at,
        COUNT(DISTINCT j.job_id) AS jobs_evaluated,
-       COUNT(DISTINCT d.job_id) FILTER (WHERE d.decision='apply')    AS applied,
+       COUNT(DISTINCT d.job_id) FILTER (
+         WHERE d.decision IN ('apply', 'apply_external_submitted')
+       ) AS applied,
        COUNT(DISTINCT d.job_id) FILTER (WHERE d.decision='skip')     AS skipped,
        COUNT(DISTINCT d.job_id) FILTER (WHERE d.decision='bookmark') AS bookmarked,
        ROUND(AVG(a.fit_score), 1) AS avg_fit

@@ -1,4 +1,3 @@
-"""Thin wrapper around google-genai SDK with multi-key rotation."""
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
@@ -7,10 +6,10 @@ from google.genai import types as gtypes
 from jobscope import config
 
 class RateLimitError(Exception):
-    """Provider signalled 429 / quota exhausted for the current key."""
+    pass
 
 class AnalysisFailure(Exception):
-    """Unrecoverable failure across all retries."""
+    pass
 
 @dataclass
 class GeminiResult:
@@ -27,7 +26,6 @@ class GeminiClient:
         self._client = genai.Client(api_key=self._current_key)
 
     def _rotate(self) -> bool:
-        """Move to next key. Returns False if we've cycled through all."""
         self._idx += 1
         if self._idx >= len(self._keys):
             return False
@@ -55,7 +53,6 @@ class GeminiClient:
         return GeminiResult(text=resp.text)
 
     def generate_json(self, *, system: str, user: str, response_schema: Any) -> GeminiResult:
-        """Call Gemini; rotate keys on 429; surface RateLimitError exhaustion."""
         attempts = 0
         while True:
             attempts += 1

@@ -1,4 +1,3 @@
-"""Tkinter modal that blocks until user picks Apply / Skip / Bookmark / Quit."""
 from __future__ import annotations
 import tkinter as tk
 from tkinter import ttk
@@ -6,9 +5,63 @@ from typing import Optional
 
 DECISIONS = ("apply", "skip", "bookmark", "quit")
 
+
+def ask_yes_no(*, title: str, message: str,
+               yes_text: str = "Yes", no_text: str = "No") -> bool:
+    result: dict[str, bool] = {"value": False}
+
+    root = tk.Tk()
+    root.title(title)
+    root.geometry("460x200")
+    root.attributes("-topmost", True)
+
+    body = ttk.Label(root, text=message, wraplength=420, justify="left",
+                     font=("Segoe UI", 10))
+    body.pack(padx=20, pady=20, anchor="w")
+
+    btns = ttk.Frame(root)
+    btns.pack(pady=10)
+
+    def pick(val: bool):
+        result["value"] = val
+        root.destroy()
+
+    yes_btn = ttk.Button(btns, text=yes_text, command=lambda: pick(True))
+    yes_btn.grid(row=0, column=0, padx=8)
+    no_btn = ttk.Button(btns, text=no_text, command=lambda: pick(False))
+    no_btn.grid(row=0, column=1, padx=8)
+    root.bind("<Return>", lambda e: pick(True))
+    root.bind("<Escape>", lambda e: pick(False))
+    yes_btn.focus_set()
+
+    root.mainloop()
+    return result["value"]
+
+
+def ask_acknowledge(*, title: str, message: str,
+                    button_text: str = "Continue") -> None:
+    root = tk.Tk()
+    root.title(title)
+    root.geometry("460x200")
+    root.attributes("-topmost", True)
+
+    body = ttk.Label(root, text=message, wraplength=420, justify="left",
+                     font=("Segoe UI", 10))
+    body.pack(padx=20, pady=20, anchor="w")
+
+    def close():
+        root.destroy()
+
+    btn = ttk.Button(root, text=button_text, command=close)
+    btn.pack(pady=12)
+    root.bind("<Return>", lambda e: close())
+    root.bind("<Escape>", lambda e: close())
+    btn.focus_set()
+
+    root.mainloop()
+
 def ask_decision(*, title: str, company: str, fit_score: int,
                  recommendation: str) -> Optional[str]:
-    """Show a modal and return one of DECISIONS, or None if window closed."""
     result: dict[str, Optional[str]] = {"value": None}
 
     root = tk.Tk()
@@ -38,10 +91,10 @@ def ask_decision(*, title: str, company: str, fit_score: int,
 
     btns = ttk.Frame(root)
     btns.pack(pady=10)
-    ttk.Button(btns, text="Apply (A)",     command=lambda: choose("apply")).grid(row=0, column=0, padx=6)
-    ttk.Button(btns, text="Skip (S)",      command=lambda: choose("skip")).grid(row=0, column=1, padx=6)
-    ttk.Button(btns, text="Bookmark (B)",  command=lambda: choose("bookmark")).grid(row=0, column=2, padx=6)
-    ttk.Button(btns, text="Quit (Q)",      command=lambda: choose("quit")).grid(row=0, column=3, padx=6)
+    ttk.Button(btns, text="Apply",     command=lambda: choose("apply")).grid(row=0, column=0, padx=6)
+    ttk.Button(btns, text="Skip",      command=lambda: choose("skip")).grid(row=0, column=1, padx=6)
+    ttk.Button(btns, text="Bookmark",  command=lambda: choose("bookmark")).grid(row=0, column=2, padx=6)
+    ttk.Button(btns, text="Quit",      command=lambda: choose("quit")).grid(row=0, column=3, padx=6)
 
     root.bind("<a>", lambda e: choose("apply"))
     root.bind("<s>", lambda e: choose("skip"))

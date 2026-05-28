@@ -1,4 +1,3 @@
-"""LinkedIn login with 2FA/captcha pause support."""
 from __future__ import annotations
 import time
 from selenium.webdriver.common.by import By
@@ -21,7 +20,6 @@ def is_logged_in(driver: WebDriver) -> bool:
     return "feed" in driver.current_url and "/login" not in driver.current_url
 
 def login(driver: WebDriver, *, on_verification=None) -> None:
-    """Log in. If LinkedIn shows captcha/2FA, calls on_verification (a blocking callable)."""
     if is_logged_in(driver):
         log.info("already_logged_in")
         return

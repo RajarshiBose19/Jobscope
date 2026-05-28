@@ -1,25 +1,19 @@
-"""Emit skill-gap rows for the historical HTML/CSS bar list."""
+from __future__ import annotations
 import json, os, sys
 from pathlib import Path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".venv", "Lib", "site-packages"))
-import duckdb
 
-DB = Path(os.environ.get("JET_WORKSPACE", ".")).resolve() / "projects/jobscope/jobscope.duckdb"
+WS = Path(os.environ.get("JET_WORKSPACE", ".")).resolve()
+SNAP = WS / "projects" / "jobscope" / "state" / "skill_gaps.json"
 
 def main():
-    rows = []
-    if DB.exists():
-        c = duckdb.connect(str(DB), read_only=True)
-        rows = c.execute("""
-          SELECT display_name, jobs_asking, jobs_where_missing
-          FROM v_skill_gaps
-          WHERE jobs_where_missing > 0
-          ORDER BY jobs_where_missing DESC LIMIT 15
-        """).fetchall()
-        c.close()
-    sys.stdout.write(json.dumps({"rows": [
-        {"skill": r[0], "asking": r[1], "missing": r[2]} for r in rows
-    ]}))
+    out = {"rows": []}
+    if SNAP.exists():
+        try:
+            data = json.loads(SNAP.read_text(encoding="utf-8"))
+            out["rows"] = data.get("rows", [])
+        except Exception:
+            pass
+    sys.stdout.write(json.dumps(out))
 
 if __name__ == "__main__":
     main()

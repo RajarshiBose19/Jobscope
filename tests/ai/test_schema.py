@@ -3,10 +3,11 @@ from pydantic import ValidationError
 from jobscope.ai.schema import JobAnalysis
 
 GOOD = {
-    "fit_score": 70, "fit_rationale": "ok",
+    "fit_score": 70,
     "experience_verdict": "in_range",
     "experience_min_years": 2, "experience_max_years": 4,
-    "skills": [{"canonical": "python", "as_written": "Python", "kind": "required"}],
+    "skills": [{"canonical": "python", "as_written": "Python",
+                "kind": "required", "match": "matched"}],
     "red_flags": [],
     "jd_quality": "average",
     "recommendation": "decent fit",

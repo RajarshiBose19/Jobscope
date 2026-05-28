@@ -1,0 +1,74 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Quick facts</title>
+<style>
+  body{margin:0;font-family:ui-sans-serif,system-ui;background:#0e1116;color:#e6edf3;padding:14px}
+  h3{margin:0 0 10px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#9aa4ad}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:6px 10px;border-radius:6px;font-size:13px;
+    background:#161b22;border:1px solid #21262d;color:#e6edf3;
+  }
+  .chip .l{font-size:11px;color:#9aa4ad;letter-spacing:.04em;text-transform:uppercase}
+  .chip .v{font-weight:600}
+  .chip.muted .v{color:#5a6572;font-weight:400;font-style:italic}
+  .chip.remote .v{color:#9dffb0}
+  .chip.hybrid .v{color:#cad1ff}
+  .chip.onsite .v{color:#ffd47a}
+  .chip.well .v{color:#9dffb0}
+  .chip.avg .v{color:#cad1ff}
+  .chip.vague .v{color:#ffb0b6}
+</style></head>
+<body>
+<h3>Quick facts</h3>
+<div class="chips" id="root"><span class="chip muted"><span class="v">—</span></span></div>
+<script>
+  function chip(label, value, extraClass){
+    const cls = 'chip' + (extraClass ? ' ' + extraClass : '') + (value ? '' : ' muted');
+    const v = value || 'not disclosed';
+    return '<span class="'+cls+'"><span class="l">'+label+'</span><span class="v">'+v+'</span></span>';
+  }
+  function workStyleClass(ws){
+    if (!ws) return '';
+    const w = ws.toLowerCase();
+    if (w.includes('remote')) return 'remote';
+    if (w.includes('hybrid')) return 'hybrid';
+    if (w.includes('on-site') || w.includes('onsite') || w.includes('on site')) return 'onsite';
+    return '';
+  }
+  function qualityClass(q){
+    if (q === 'well_written') return 'well';
+    if (q === 'average') return 'avg';
+    if (q === 'vague') return 'vague';
+    return '';
+  }
+  function salaryText(d, a){
+    // Prefer analysis values (often better-parsed); fall back to job-level.
+    const min = (a && a.salary_min_lpa) ?? d.salary_min_lpa;
+    const max = (a && a.salary_max_lpa) ?? d.salary_max_lpa;
+    if (min == null && max == null) return '';
+    if (min != null && max != null && min !== max) return min + '–' + max + ' LPA';
+    return (min ?? max) + ' LPA';
+  }
+  function experienceText(a, d){
+    const lo = (a && a.experience_min_years) ?? d.experience_min;
+    const hi = (a && a.experience_max_years) ?? d.experience_max;
+    if (lo == null && hi == null) return '';
+    if (lo != null && hi != null && lo !== hi) return lo + '–' + hi + ' yrs';
+    return (lo ?? hi) + ' yrs';
+  }
+  window.addEventListener('jet:refresh', e => {
+    const d = e.detail || {};
+    const a = d.analysis || {};
+    if (d.state === 'idle' || d.state === 'missing'){
+      document.getElementById('root').innerHTML =
+        '<span class="chip muted"><span class="v">waiting for next job…</span></span>';
+      return;
+    }
+    const parts = [];
+    parts.push(chip('Location', d.location || ''));
+    parts.push(chip('Experience', experienceText(a, d)));
+    parts.push(chip('Salary', salaryText(d, a)));
+    parts.push(chip('JD quality', a.jd_quality ? a.jd_quality.replace('_', ' ') : '', qualityClass(a.jd_quality)));
+    document.getElementById('root').innerHTML = parts.join('');
+  });
+</script></body></html>

@@ -1,4 +1,3 @@
-"""Read current_job.json; emit a uniform payload for the live cockpit hub."""
 from __future__ import annotations
 import json
 import os

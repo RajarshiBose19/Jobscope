@@ -1,7 +1,7 @@
-"""Navigate LinkedIn jobs search and apply our filters."""
 from __future__ import annotations
 import time
 from urllib.parse import urlencode, quote
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from jobscope import config
@@ -36,7 +36,14 @@ def build_search_url(term: str) -> str:
 def navigate_to_search(driver: WebDriver, term: str) -> None:
     url = build_search_url(term)
     log.info("navigate_search", extra={"term": term, "url": url})
-    driver.get(url)
+    try:
+        driver.get(url)
+    except TimeoutException:
+        log.warning("navigate_search_page_timeout", extra={"term": term})
+        try:
+            driver.execute_script("window.stop();")
+        except Exception:
+            pass
     time.sleep(3)
     wait_for(driver, By.CSS_SELECTOR,
-             "ul.jobs-search__results-list, div.jobs-search-results-list", timeout=20)
+             "ul.jobs-search__results-list, div.jobs-search-results-list", timeout=30)

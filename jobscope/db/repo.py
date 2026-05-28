@@ -1,4 +1,3 @@
-"""DuckDB write/read helpers. All functions take a connection."""
 from __future__ import annotations
 import csv
 import json
@@ -10,10 +9,7 @@ from jobscope.utils.ids import new_session_id, new_uuid
 
 SEED_CSV = Path(__file__).parent / "seed_skills.csv"
 
-# ---------- skills ----------
-
 def seed_skills_canonical(conn: duckdb.DuckDBPyConnection) -> int:
-    """Idempotent upsert of seed_skills.csv into skills_canonical."""
     with SEED_CSV.open("r", encoding="utf-8", newline="") as f:
         rows = list(csv.DictReader(f))
     n = 0
@@ -28,8 +24,6 @@ def seed_skills_canonical(conn: duckdb.DuckDBPyConnection) -> int:
         """, [r["skill_canonical"], r["display_name"], r["category"], r["aliases"]])
         n += 1
     return n
-
-# ---------- sessions ----------
 
 def start_session(conn, search_terms: list[str], search_location: str,
                   filters: dict | None = None) -> str:
@@ -54,8 +48,6 @@ def touch_current_job(conn, job_id: str) -> None:
         UPDATE session_state SET current_job_id=?, last_active_at=? WHERE id=1
     """, [job_id, datetime.now(timezone.utc)])
 
-# ---------- jobs ----------
-
 def upsert_job(conn, job: dict[str, Any]) -> None:
     cols = ["job_id","session_id","scraped_at","search_term","title","company","location",
             "work_style","posted_relative","experience_text","experience_min","experience_max",
@@ -73,7 +65,15 @@ def mark_job_status(conn, job_id: str, status: str, error: str | None = None) ->
         [status, error, job_id],
     )
 
-# ---------- analyses ----------
+def fill_salary_if_missing(conn, job_id: str, salary_min_lpa, salary_max_lpa) -> None:
+    if salary_min_lpa is None and salary_max_lpa is None:
+        return
+    conn.execute("""
+        UPDATE jobs
+        SET salary_min_lpa = COALESCE(salary_min_lpa, ?),
+            salary_max_lpa = COALESCE(salary_max_lpa, ?)
+        WHERE job_id = ?
+    """, [salary_min_lpa, salary_max_lpa, job_id])
 
 def insert_analysis(conn, *, job_id: str, prompt_version: str, model_name: str,
                     latency_ms: int, parsed: dict, raw_json: str) -> str:
@@ -92,7 +92,6 @@ def insert_analysis(conn, *, job_id: str, prompt_version: str, model_name: str,
     return aid
 
 def replace_job_skills(conn, job_id: str, skills: list[dict]) -> None:
-    """Replace all skills for one job atomically."""
     conn.execute("DELETE FROM job_skills WHERE job_id=?", [job_id])
     for s in skills:
         conn.execute("""
@@ -100,8 +99,6 @@ def replace_job_skills(conn, job_id: str, skills: list[dict]) -> None:
             VALUES (?, ?, ?, ?)
             ON CONFLICT DO NOTHING
         """, [job_id, s["canonical"], s["as_written"], s["kind"]])
-
-# ---------- decisions ----------
 
 def record_decision(conn, *, job_id: str, session_id: str, decision: str,
                     source: str, notes: str | None = None) -> str:
@@ -113,7 +110,23 @@ def record_decision(conn, *, job_id: str, session_id: str, decision: str,
     """, [did, job_id, session_id, datetime.now(timezone.utc), decision, source, notes])
     return did
 
-# ---------- user profile ----------
+def recent_decision_exists(conn, job_id: str, days: int) -> bool:
+    row = conn.execute("""
+        SELECT 1 FROM decisions
+        WHERE job_id = ?
+          AND decided_at >= (CURRENT_TIMESTAMP - INTERVAL (?) DAY)
+        LIMIT 1
+    """, [job_id, days]).fetchone()
+    return row is not None
+
+def has_apply_decision(conn, job_id: str) -> bool:
+    row = conn.execute("""
+        SELECT 1 FROM decisions
+        WHERE job_id = ?
+          AND decision IN ('apply', 'apply_external_submitted')
+        LIMIT 1
+    """, [job_id]).fetchone()
+    return row is not None
 
 def upsert_user_profile(conn, profile: dict) -> None:
     conn.execute("""

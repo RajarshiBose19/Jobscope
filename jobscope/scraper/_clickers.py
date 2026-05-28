@@ -1,4 +1,3 @@
-"""Safe wait/click helpers. Adapted from the reference's clickers_and_finders.py."""
 from __future__ import annotations
 import time
 from typing import Optional

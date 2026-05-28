@@ -2,11 +2,32 @@
 <style>
   body{margin:0;font-family:ui-sans-serif,system-ui;background:#0e1116;color:#e6edf3;padding:14px;line-height:1.45}
   h3{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#9aa4ad}
+  #action{
+    display:none;background:#3a2a08;border:1px solid #f1c40f;border-radius:6px;
+    padding:8px 10px;margin:0 0 10px;font-size:13px;color:#ffe7a0;
+    white-space:pre-wrap;word-break:break-word;
+  }
+  #action.show{display:block}
+  #action b{color:#f1c40f;display:block;font-size:11px;letter-spacing:.08em;
+            text-transform:uppercase;margin-bottom:4px}
+  #r{font-size:14px}
 </style></head>
-<body><h3>AI recommendation</h3><div id="r" style="font-size:14px">—</div>
+<body>
+<h3>AI recommendation</h3>
+<div id="action"><b>Action required</b><span id="action-text"></span></div>
+<div id="r">—</div>
 <script>
   window.addEventListener('jet:refresh', e => {
     const d = e.detail || {};
-    document.getElementById('r').textContent = (d.analysis && d.analysis.recommendation) || '—';
+    const a = d.analysis || {};
+    document.getElementById('r').textContent = a.recommendation || '—';
+    const box = document.getElementById('action');
+    const txt = a.action_required;
+    if (txt && typeof txt === 'string' && txt.trim().length) {
+      document.getElementById('action-text').textContent = txt;
+      box.classList.add('show');
+    } else {
+      box.classList.remove('show');
+    }
   });
 </script></body></html>

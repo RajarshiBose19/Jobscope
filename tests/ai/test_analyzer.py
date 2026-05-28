@@ -5,10 +5,11 @@ from jobscope.ai.analyzer import analyze
 from jobscope.ai.client import AnalysisFailure
 
 VALID_JSON = json.dumps({
-    "fit_score": 65, "fit_rationale": "decent",
+    "fit_score": 65,
     "experience_verdict": "in_range",
     "experience_min_years": 2, "experience_max_years": 4,
-    "skills": [{"canonical": "python", "as_written": "Python", "kind": "required"}],
+    "skills": [{"canonical": "python", "as_written": "Python",
+                "kind": "required", "match": "matched"}],
     "red_flags": [],
     "jd_quality": "average",
     "recommendation": "ok",

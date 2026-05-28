@@ -1,4 +1,3 @@
-"""Resume PDF → raw text. Downstream `normalize` turns text into profile dict."""
 from pathlib import Path
 import pdfplumber
 

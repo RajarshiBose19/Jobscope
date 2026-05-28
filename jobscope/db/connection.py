@@ -1,4 +1,3 @@
-"""DuckDB connection helpers."""
 from pathlib import Path
 import duckdb
 
@@ -13,6 +12,5 @@ def open_ro(db_path: Path) -> duckdb.DuckDBPyConnection:
     return duckdb.connect(str(db_path), read_only=True)
 
 def init_schema(conn: duckdb.DuckDBPyConnection) -> None:
-    """Apply schema.sql and views.sql. Idempotent (CREATE IF NOT EXISTS / OR REPLACE)."""
     conn.execute(SCHEMA_PATH.read_text(encoding="utf-8"))
     conn.execute(VIEWS_PATH.read_text(encoding="utf-8"))
