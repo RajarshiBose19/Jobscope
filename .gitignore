@@ -72,3 +72,11 @@ scripts/generate_brief_pdf.py
 
 # Editor / AI assistant local state
 .claude/
+
+docs
+
+jobscope_final_brief.md
+
+PROJECT.md
+
+PROGRESS.md
